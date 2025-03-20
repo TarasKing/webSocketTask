@@ -1,15 +1,15 @@
 import WebSocket, { WebSocketServer } from "ws";
 
-const PORT = 8080;
+const PORT: number = 8080;
 
 // Create a WebSocket server
-const server = new WebSocketServer({ port: PORT });
+const server: WebSocketServer = new WebSocketServer({ port: PORT });
 
-server.on("connection", (ws) => {
+server.on("connection", (ws: WebSocket) => {
   console.log("Client connected");
 
   // function for sending messages from server
-  const sendMessage = (message: string, delay: number) => {
+  const sendMessage = (message: string, delay: number): void => {
     setTimeout(() => {
       ws.send(message);
       console.log(`Sent: ${message}`);
@@ -20,19 +20,19 @@ server.on("connection", (ws) => {
   sendMessage("hello", 2000);
   sendMessage("still here?", 5000);
 
-  const leaveMessages = [
+  const leaveMessages: string[] = [
     "you can leave now",
     "you can leave now",
     "you can leave now",
     "you can leave now",
   ];
 
-  leaveMessages.forEach((msg, index) => {
+  leaveMessages.forEach((msg: string, index: number) => {
     //   use index in leaveMessages to increase time between messages
     sendMessage(msg, 8500 + index * 3500);
   });
 
-  ws.on("close", () => {
+  ws.on("close", (): void => {
     console.log("Client disconnected");
   });
 });
@@ -51,16 +51,16 @@ setTimeout(() => {
       this.socket = new WebSocket(url);
       this.startTime = Date.now();
 
-      this.socket.on("open", () => {
+      this.socket.on("open", (): void => {
         console.log("Connected to server");
       });
 
-      this.socket.on("message", (data) => {
+      this.socket.on("message", (data: WebSocket.RawData): void => {
         this.handleMessage(data.toString());
       });
     }
 
-    setupProtocol() {
+    setupProtocol(): void {
       this.expectedMessages = [
         { message: "hello", time: 2000 },
         { message: "still here?", time: 5000 },
@@ -71,8 +71,8 @@ setTimeout(() => {
       ];
     }
 
-    handleMessage(message: string) {
-      const receivedTime = Date.now() - this.startTime;
+    handleMessage(message: string): void {
+      const receivedTime: number = Date.now() - this.startTime;
       const expected = this.expectedMessages.shift();
 
       if (!expected) {
@@ -80,8 +80,8 @@ setTimeout(() => {
         return;
       }
 
-      const lowerBound = expected.time - 300;
-      const upperBound = expected.time + 300;
+      const lowerBound: number = expected.time - 300;
+      const upperBound: number = expected.time + 300;
 
       //  console.log(
       //    ` Received "${message}" at ${receivedTime}ms (Expected: ${expected.time}ms)`
@@ -100,6 +100,6 @@ setTimeout(() => {
     }
   }
 
-  const protocol = new Protocol(`ws://localhost:${PORT}`);
+  const protocol: Protocol = new Protocol(`ws://localhost:${PORT}`);
   protocol.setupProtocol();
 }, 1000); // Wait 1 second before starting client
